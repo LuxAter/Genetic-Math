@@ -50,12 +50,12 @@ void genetic::RunAlgorithm(double ingoal, int inpopulation, int inlength,
   std::cout << "GENORATION|    BEST    |  AVERAGE   |    WORST   \n";
   while (solved == false) {
     totalfitness = 0;
-    if (genorations > 2000) {
-      break;
-    }
     for (int i = 0; i < population; i++) {
       Solve(i);
       SetFitness(i);
+    }
+    if (genorations >= 2000) {
+      break;
     }
     genorations++;
     std::sort(ChroPopulation.begin(), ChroPopulation.end(), SortFit);
@@ -74,9 +74,15 @@ void genetic::RunAlgorithm(double ingoal, int inpopulation, int inlength,
     ChroPopulation = newpop;
     newpop.clear();
   }
+  induco::Break();
   if (solved == true) {
-    DrawEq(0);
+    std::cout << "Solved with:\n";
   }
+  std::cout << "Goal: " << goal << "\n";
+  std::cout << "Genoration " << genorations << ":\n";
+  DrawEq(0);
+  std::cout << "\n\n\n\n\n";
+  induco::Pause();
 }
 void genetic::PrintGeneSymbole(int value) {}
 string genetic::GenRandomBits() {
@@ -169,37 +175,46 @@ void genetic::Mutate(int pointer) {
     }
   }
   if (drand() < (mutate / (double)10)) {
-    string gene = "";
-    for (int i = 0; i < 4; i++) {
-      if (rand() % 2 == 0) {
-        gene += "1";
-      } else {
-        gene += "0";
+    if (rand() % 2 == 0) {
+      string gene = "";
+      for (int i = 0; i < 4; i++) {
+        if (rand() % 2 == 0) {
+          gene += "1";
+        } else {
+          gene += "0";
+        }
       }
+      newpop[pointer].bits = newpop[pointer].bits + gene;
     }
-    newpop[pointer].bits = newpop[pointer].bits + gene;
   }
 }
 void genetic::Crossover(int a, int b) {
-  if (drand() < cross) {
-    int crosspoint = rand() % ChroPopulation[a].bits.size();
-    if (crosspoint > ChroPopulation[b].bits.size()) {
-      crosspoint = ChroPopulation[b].bits.size() - 1;
-    }
-    Chromosome t1, t2;
-    t1.bits = ChroPopulation[a].bits.substr(0, crosspoint) +
-              ChroPopulation[b].bits.substr(crosspoint,
-                                            ChroPopulation[a].bits.size());
-    t2.bits = ChroPopulation[b].bits.substr(0, crosspoint) +
-              ChroPopulation[a].bits.substr(crosspoint,
-                                            ChroPopulation[a].bits.size());
-    t1.value = 0;
-    t1.fitness = 0;
-    t2.value = 0;
-    t2.fitness = 0;
-    newpop.push_back(t1);
-    newpop.push_back(t2);
+  Chromosome t1, t2;
+  if (ChroPopulation[a].bits.size() < ChroPopulation[b].bits.size()) {
+    int store = a;
+    a = b;
+    b = a;
   }
+  for (int i = 0; i < ChroPopulation[a].bits.size(); i++) {
+    if (i < ChroPopulation[b].bits.size()) {
+      if (drand() > cross) {
+        t1.bits += ChroPopulation[b].bits[i];
+        t2.bits += ChroPopulation[a].bits[i];
+      } else {
+        t1.bits += ChroPopulation[a].bits[i];
+        t2.bits += ChroPopulation[b].bits[i];
+      }
+    } else {
+      t1.bits += ChroPopulation[a].bits[i];
+      t2.bits += ChroPopulation[a].bits[i];
+    }
+  }
+  t1.value = 0;
+  t1.fitness = 0;
+  t2.value = 0;
+  t2.fitness = 0;
+  newpop.push_back(t1);
+  newpop.push_back(t2);
 }
 
 double genetic::drand() { return (fabs((float)rand() / (RAND_MAX + 1))); }

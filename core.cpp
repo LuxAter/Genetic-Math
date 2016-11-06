@@ -1,11 +1,13 @@
 #include "genetic.h"
 #include "induco.h"
+#include <iomanip>
 #include <iostream>
 #include <pessum.h>
 #include <string>
 #include <vector>
 int main(int argc, char *argv[]) {
   srand(time(NULL));
+  std::cout << std::setprecision(10);
   bool running = true;
   pessum::InitializePessumComponents();
   int input = 0;

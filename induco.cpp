@@ -37,7 +37,7 @@ int induco::Menu(std::string title, std::vector<std::string> options) {
 
 double induco::GetValue(std::string value) {
   std::cout << "Please Enter Value for \"" + value + "\": ";
-  double input = 0;
+  long double input = 0;
   std::cin >> input;
   return (input);
 }
