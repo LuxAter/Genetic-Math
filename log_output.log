@@ -1,2 +1,4 @@
 SUCCESS>>Opened log: log_output.log>>pessum_files/logging.cpp/InitializeLogging
-INFORMATION>>Sat Nov  5 20:37:37 2016>>TimeStamp
+INFORMATION>>Sat Nov  5 21:06:30 2016>>TimeStamp
+SUCCESS>>Terminated log file>>Pessum/logging.cpp/TerminateLogging
+INFORMATION>>Sat Nov  5 21:07:09 2016>>TimeStamp

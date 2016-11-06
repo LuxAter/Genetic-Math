@@ -15,14 +15,14 @@ std::vector<Chromosome> newpop;
 double totalfitness;
 double goal, cross, mutate;
 int population, length, goodpointer;
-bool solved = false;
+bool solved;
 }
 
 void genetic::RunAlgorithm(double ingoal, int inpopulation, int inlength,
                            double incross, double inmutate) {
   if (ingoal == 0 && inpopulation == 0 && inlength == 0 && incross == 0 &&
       inmutate == 0) {
-    ingoal = rand() % 10000;
+    ingoal = 1000;
     inpopulation = 100;
     inlength = 20;
     incross = 0.7;
@@ -46,6 +46,7 @@ void genetic::RunAlgorithm(double ingoal, int inpopulation, int inlength,
     newchromosome.fitness = 0;
     ChroPopulation.push_back(newchromosome);
   }
+  std::cout << goal << "\n";
   std::cout << "GENORATION|    BEST    |  AVERAGE   |    WORST   \n";
   while (solved == false) {
     totalfitness = 0;
@@ -65,8 +66,9 @@ void genetic::RunAlgorithm(double ingoal, int inpopulation, int inlength,
     newpop.clear();
     while (newpop.size() < population) {
       Crossover(Roulette(), Roulette());
-      Mutate(newpop.size() - 2);
-      Mutate(newpop.size() - 1);
+    }
+    for (int i = 0; i < newpop.size(); i++) {
+      Mutate(i);
     }
     ChroPopulation.clear();
     ChroPopulation = newpop;
@@ -221,7 +223,7 @@ void genetic::DrawStats(int genoration) {
   }
   line = line + value + "|";
   double averagesum = 0;
-  for (int i = 0; i < population - 1; i++) {
+  for (int i = 0; i < ChroPopulation.size(); i++) {
     averagesum += ChroPopulation[i].value;
   }
   averagesum /= (double)population;
