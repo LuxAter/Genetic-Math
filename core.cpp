@@ -1,4 +1,3 @@
-#include "genetic.h"
 #include "induco.h"
 #include <iomanip>
 #include <iostream>
@@ -24,7 +23,7 @@ int main(int argc, char *argv[]) {
       int length = induco::GetValue("Chromosome Length(5-10)");
       double crossover = induco::GetValue("Cross Over Rate  (0.70)");
       double mutate = induco::GetValue("Mutation Rate   (0.001)");
-      genetic::RunAlgorithm(value, population, length, crossover, mutate);
+      // genetic::RunAlgorithm(value, population, length, crossover, mutate);
       induco::Break();
     }
   }

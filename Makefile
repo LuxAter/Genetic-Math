@@ -23,6 +23,8 @@ top_obj:$(OBJ_FILES)
 
 .PHONY : subsystem
 subsystem:
+	setterm -foreground blue
+	cd genetic && $(MAKE)
 	setterm -default
 
 .PHONY : clean
