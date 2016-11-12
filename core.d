@@ -1,1 +1,1 @@
-core.o: core.cpp induco.h
+core.o: core.cpp genetic/genetic_core.h induco.h

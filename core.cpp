@@ -1,3 +1,4 @@
+#include "genetic/genetic_core.h"
 #include "induco.h"
 #include <iomanip>
 #include <iostream>
@@ -18,12 +19,13 @@ int main(int argc, char *argv[]) {
     }
     if (input == 2) {
       induco::Break();
-      double value = induco::GetValue("Value To Solve For(...)");
-      int population = induco::GetValue("Population Size(10-100)");
-      int length = induco::GetValue("Chromosome Length(5-10)");
-      double crossover = induco::GetValue("Cross Over Rate  (0.70)");
-      double mutate = induco::GetValue("Mutation Rate   (0.001)");
+      // double value = induco::GetValue("Value To Solve For(...)");
+      // int population = induco::GetValue("Population Size(10-100)");
+      // int length = induco::GetValue("Chromosome Length(5-10)");
+      // double crossover = induco::GetValue("Cross Over Rate  (0.70)");
+      // double mutate = induco::GetValue("Mutation Rate   (0.001)");
       // genetic::RunAlgorithm(value, population, length, crossover, mutate);
+      genetic::RunAlgorithm();
       induco::Break();
     }
   }
