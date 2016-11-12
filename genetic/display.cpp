@@ -73,7 +73,7 @@ void genetic::display::DrawChromosome(int pointer, bool index) {
 }
 
 void genetic::display::DisplayAll(bool chromosome, bool equation, bool fitness,
-                                  bool nulls) {
+                                  bool compfitness, bool nulls) {
   for (int i = 0; i < population.size(); i++) {
     if (chromosome == true) {
       DrawChromosome(i, true);
@@ -82,7 +82,10 @@ void genetic::display::DisplayAll(bool chromosome, bool equation, bool fitness,
       DrawEquation(i, nulls, true);
     }
     if (fitness == true) {
-      std::cout << "[" << i << "]" << population[i].fitness << "\n";
+      std::cout << "[" << i << "]F" << population[i].fitness << "\n";
+    }
+    if (compfitness == true) {
+      std::cout << "[" << i << "]C" << population[i].cumulativefitness << "\n";
     }
   }
 }

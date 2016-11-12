@@ -31,24 +31,25 @@ double genetic::RunAlgorithm(int popsize, int chrolength, double gova,
   evolve::GenorateBasePopulation();
   // display::DisplayAll(false, true, true, false);
   display::DrawStats(true);
+  genoration = 0;
   while (running == true) {
-    if (genoration > 5) {
+    if (genoration > 0) {
       running = false;
     }
     evolve::CalculateValues();
     evolve::CalculateFitness();
     evolve::SumFitness();
     evolve::Sort();
-    display::DisplayAll(false, true, false, true);
+    evolve::CumulateFitness();
+    display::DisplayAll(false, true, false, false, true);
     if (population[0].value == goalvalue) {
       running = false;
       break;
     } else {
       // display::DrawStats();
       evolve::Killoff();
-      induco::Line(5);
-      display::DisplayAll(false, true, false, true);
-      induco::Line(5);
+      induco::Line(20);
+      display::DisplayAll(false, true, false, false, true);
       evolve::Reproduce();
       // evolve::Mutate();
     }

@@ -13,6 +13,7 @@
 namespace genetic {
 namespace evolve {
 double totalfitness = 0;
+bool doubleup = false;
 }
 }
 
@@ -63,7 +64,7 @@ void genetic::evolve::CalculateValues() {
 }
 
 void genetic::evolve::CalculateFitness() {
-  for (int i = 0; i < populationsize; i++) {
+  for (int i = 0; i < population.size(); i++) {
     if (population[i].value == goalvalue) {
       population[i].fitness = 1000;
     } else {
@@ -73,65 +74,51 @@ void genetic::evolve::CalculateFitness() {
   }
 }
 
-void genetic::evolve::Killoff() {
-  while (population.size() > ceil(populationsize / (double)2)) {
-    population.erase(population.begin() + SelectLow());
+void genetic::evolve::CumulateFitness() {
+  double fitness = 0;
+  for (int i = population.size() - 1; i >= 0; i--) {
+    fitness += population[i].fitness;
+    population[i].cumulativefitness = fitness;
   }
+}
+
+void genetic::evolve::Killoff() {
+  std::vector<Chromosome> living;
+  while (living.size() < ceil(populationsize / (double)2)) {
+    int pointer = SelectHigh();
+    living.push_back(population[pointer]);
+    population.erase(population.begin() + pointer);
+  }
+  population.clear();
+  population = living;
 }
 
 void genetic::evolve::Reproduce() {
   std::vector<Chromosome> newpop;
-  std::vector<Chromosome> usedparents;
-  bool doubleup = false;
-  while (newpop.size() + usedparents.size() < populationsize) {
-    display::DisplayAll(false, true, false, true);
-    if (population.size() < 1) {
-      population.insert(population.begin(), usedparents.begin(),
-                        usedparents.end());
-      doubleup = true;
-      Sort();
-    }
+  std::vector<Chromosome> parents = population;
+  doubleup = false;
+  while (newpop.size() + parents.size() < populationsize) {
     Chromosome newchromosome;
     int parentone = SelectHigh();
-    if (doubleup == false) {
-      usedparents.push_back(population[parentone]);
+    int parenttwo = parentone;
+    while (parenttwo == parentone) {
+      parenttwo = SelectHigh();
     }
-    population.erase(population.begin() + parentone);
-    parentone = usedparents.size() - 1;
-    if (population.size() < 1) {
-      population.insert(population.begin(), usedparents.begin(),
-                        usedparents.end());
-      doubleup = true;
-      Sort();
-    }
-    int parenttwo = SelectHigh();
-    if (doubleup == false) {
-      usedparents.push_back(population[parenttwo]);
-    }
-    population.erase(population.begin() + parenttwo);
-    parenttwo = usedparents.size() - 1;
     for (int i = 0; i < chromosomelength * 4; i += 4) {
       if (drand() < 0.5) {
         for (int j = i; j < i + 4; j++) {
-          newchromosome.bits += usedparents[parenttwo].bits[j];
+          newchromosome.bits += population[parenttwo].bits[j];
         }
       } else {
         for (int j = i; j < i + 4; j++) {
-          newchromosome.bits += usedparents[parentone].bits[j];
+          newchromosome.bits += population[parentone].bits[j];
         }
       }
     }
-    std::cout << "[ ";
-    display::DrawEquation(usedparents[parentone], true);
-    std::cout << " ] + [ ";
-    display::DrawEquation(usedparents[parenttwo], true);
-    std::cout << " ] = [ ";
-    display::DrawEquation(newchromosome, true);
-    std::cout << " ]\n";
     newpop.push_back(newchromosome);
   }
   population.clear();
-  population = usedparents;
+  population = parents;
   population.insert(population.end(), newpop.begin(), newpop.end());
 }
 
@@ -150,43 +137,25 @@ void genetic::evolve::Mutate() {
 }
 
 int genetic::evolve::SelectHigh() {
-  bool selected = false;
-  double cumulativefiteness = 0, cumulativefitenessbase = 0;
-  if (population.size() == 1) {
-    return (0);
-  }
-  for (int i = 0; i < population.size(); i++) {
-    cumulativefitenessbase += population[i].fitness;
-  }
-  while (selected == false) {
-    double cutoff = drand() * totalfitness;
-    cumulativefiteness = cumulativefitenessbase;
-    for (int i = 0; i < population.size(); i++) {
-      if (cumulativefiteness > cutoff) {
-        selected = true;
-        return (i);
-      } else {
-        cumulativefiteness -= population[i].fitness;
-      }
+  double point = drand() * totalfitness;
+  for (int i = population.size(); i >= 0; i--) {
+    // std::cout << point << ":" << population[i].cumulativefitness << "\n";
+    if (population[i].cumulativefitness > point) {
+      return (i);
     }
   }
+  return (0);
 }
 
 int genetic::evolve::SelectLow() {
-  bool selected = false;
-  double cumulativefiteness = 0;
-  double cutoff = drand() * totalfitness;
-  while (selected == false) {
-    cumulativefiteness = 0;
-    for (int i = population.size(); i > 0; i--) {
-      if (cumulativefiteness < cutoff) {
-        selected = true;
-        return (i);
-      } else {
-        cumulativefiteness += population[i].fitness;
-      }
+  double point = drand() * totalfitness;
+  for (int i = 0; i < population.size(); i++) {
+    std::cout << point << ":" << population[i].cumulativefitness << "\n";
+    if (population[i].cumulativefitness < point) {
+      return (i);
     }
   }
+  return (0);
 }
 
 void genetic::evolve::SumFitness() {

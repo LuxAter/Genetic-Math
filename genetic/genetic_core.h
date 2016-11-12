@@ -6,7 +6,7 @@
 namespace genetic {
 struct Chromosome {
   std::string bits;
-  double value, fitness;
+  double value, fitness, cumulativefitness;
 };
 extern int populationsize, chromosomelength, genoration;
 extern double goalvalue, crossoverrate, mutationrate;
