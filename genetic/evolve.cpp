@@ -12,8 +12,7 @@
 
 namespace genetic {
 namespace evolve {
-double totalfitness = 0;
-bool doubleup = false;
+double totalfitness = 0, totalbottemup = 0;
 }
 }
 
@@ -48,6 +47,9 @@ void genetic::evolve::CalculateValues() {
         } else if (storedoperator == 12) {
           value *= bit;
         } else if (storedoperator == 13) {
+          if (bit == 0) {
+            bit = 1;
+          }
           value /= bit;
         } else if (storedoperator == 0) {
           value = bit;
@@ -80,23 +82,23 @@ void genetic::evolve::CumulateFitness() {
     fitness += population[i].fitness;
     population[i].cumulativefitness = fitness;
   }
+  fitness = 0;
+  for (int i = 0; i < population.size(); i++) {
+    fitness += std::fabs((double)(goalvalue - population[i].value));
+    population[i].bottemup = fitness;
+  }
+  totalbottemup = fitness;
 }
 
 void genetic::evolve::Killoff() {
-  std::vector<Chromosome> living;
-  while (living.size() < ceil(populationsize / (double)2)) {
-    int pointer = SelectHigh();
-    living.push_back(population[pointer]);
-    population.erase(population.begin() + pointer);
+  while (population.size() > ceil(populationsize / (double)2)) {
+    population.erase(population.begin() + SelectLow());
   }
-  population.clear();
-  population = living;
 }
 
 void genetic::evolve::Reproduce() {
   std::vector<Chromosome> newpop;
   std::vector<Chromosome> parents = population;
-  doubleup = false;
   while (newpop.size() + parents.size() < populationsize) {
     Chromosome newchromosome;
     int parentone = SelectHigh();
@@ -138,8 +140,7 @@ void genetic::evolve::Mutate() {
 
 int genetic::evolve::SelectHigh() {
   double point = drand() * totalfitness;
-  for (int i = population.size(); i >= 0; i--) {
-    // std::cout << point << ":" << population[i].cumulativefitness << "\n";
+  for (int i = population.size() - 1; i >= 0; i--) {
     if (population[i].cumulativefitness > point) {
       return (i);
     }
@@ -148,10 +149,9 @@ int genetic::evolve::SelectHigh() {
 }
 
 int genetic::evolve::SelectLow() {
-  double point = drand() * totalfitness;
+  double point = drand() * totalbottemup;
   for (int i = 0; i < population.size(); i++) {
-    std::cout << point << ":" << population[i].cumulativefitness << "\n";
-    if (population[i].cumulativefitness < point) {
+    if (point < population[i].bottemup) {
       return (i);
     }
   }

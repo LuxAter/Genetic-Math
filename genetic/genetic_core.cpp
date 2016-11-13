@@ -16,7 +16,7 @@ double goalvalue = 1000, crossoverrate = 0.7, mutationrate = 0.001;
 std::vector<Chromosome> population;
 }
 
-double genetic::RunAlgorithm(int popsize, int chrolength, double gova,
+double genetic::RunAlgorithm(double gova, int popsize, int chrolength,
                              double crossrate, double mutrate) {
   if (popsize != 0) {
     populationsize = popsize;
@@ -29,11 +29,10 @@ double genetic::RunAlgorithm(int popsize, int chrolength, double gova,
   mutationrate = mutrate;
   bool running = true;
   evolve::GenorateBasePopulation();
-  // display::DisplayAll(false, true, true, false);
   display::DrawStats(true);
   genoration = 0;
   while (running == true) {
-    if (genoration > 0) {
+    if (genoration > 500) {
       running = false;
     }
     evolve::CalculateValues();
@@ -41,23 +40,44 @@ double genetic::RunAlgorithm(int popsize, int chrolength, double gova,
     evolve::SumFitness();
     evolve::Sort();
     evolve::CumulateFitness();
-    display::DisplayAll(false, true, false, false, true);
     if (population[0].value == goalvalue) {
       running = false;
       break;
     } else {
-      // display::DrawStats();
+      display::DrawStats();
       evolve::Killoff();
-      induco::Line(20);
-      display::DisplayAll(false, true, false, false, true);
       evolve::Reproduce();
-      // evolve::Mutate();
+      evolve::Mutate();
     }
     genoration++;
-    induco::Line(10);
   }
-  population.clear();
+  if (population[0].value == goalvalue) {
+    induco::Break();
+    std::cout << "Solved in " << genoration << "\n";
+    display::DrawChromosome(0);
+    display::DrawEquation(0);
+  } else {
+    induco::Break();
+    std::cout << "Failed to solve in " << genoration << "\n";
+    std::cout << "Closest value to [" << goalvalue << "]:\n";
+    display::DrawChromosome(0);
+    display::DrawEquation(0);
+  }
+  Clean();
   return (0.0);
 }
 
 double genetic::drand() { return (fabs((double)rand() / (RAND_MAX + 1))); }
+
+void genetic::Clean() {
+
+  population.clear();
+  goalvalue = 0;
+  populationsize = 0;
+  chromosomelength = 0;
+  genoration = 0;
+  crossoverrate = 0;
+  mutationrate = 0;
+  evolve::totalfitness = 0;
+  evolve::totalbottemup = 0;
+}

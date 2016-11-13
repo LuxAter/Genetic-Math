@@ -6,13 +6,14 @@
 namespace genetic {
 struct Chromosome {
   std::string bits;
-  double value, fitness, cumulativefitness;
+  double value, fitness, cumulativefitness, bottemup;
 };
 extern int populationsize, chromosomelength, genoration;
 extern double goalvalue, crossoverrate, mutationrate;
 extern std::vector<Chromosome> population;
-double RunAlgorithm(int popsize = 5, int chrolength = 5, double gova = 10,
+double RunAlgorithm(double gova = 0, int popsize = 100, int chrolength = 15,
                     double crossrate = 0.7, double mutrate = 0.001);
 double drand();
+void Clean();
 }
 #endif

@@ -3,8 +3,7 @@
 #include "genetic_core.h"
 namespace genetic {
 namespace evolve {
-extern double totalfitness;
-extern bool doubleup;
+extern double totalfitness, totalbottemup;
 void GenorateBasePopulation();
 void CalculateValues();
 void CalculateFitness();

@@ -6,13 +6,35 @@
 #include <string>
 #include <vector>
 
-void genetic::display::DrawStats(bool firstcall) {}
+void genetic::display::DrawStats(bool firstcall) {
+  if (firstcall == true) {
+    std::cout << "|     BEST     |    MEDIAN    |     WORST    |\n"
+                 "|--------------+--------------+--------------|\n";
+  }
+  std::string line = "|";
+  std::string variable = std::to_string(population[0].value);
+  while (variable.size() < 14) {
+    variable = " " + variable;
+  }
+  line += variable + "|";
+  variable = std::to_string(population[population.size() / 2].value);
+  while (variable.size() < 14) {
+    variable = " " + variable;
+  }
+  line += variable + "|";
+  variable = std::to_string(population[population.size() - 1].value);
+  while (variable.size() < 14) {
+    variable = " " + variable;
+  }
+  line += variable + "|\n";
+  std::cout << line;
+}
 
 void genetic::display::DrawEquation(int pointer, bool nulls, bool index) {
   bool loadoperator = false;
   std::string localbits = population[pointer].bits;
-  std::string bytes[16] = {"0", "1", "2", "3", "4", "5", "6",  "7",
-                           "8", "9", "+", "-", "*", "/", "14", "15"};
+  std::string bytes[16] = {"0", "1", "2", "3", "4", "5", "6", "7",
+                           "8", "9", "+", "-", "*", "/", "N", "M"};
   if (index == true) {
     std::cout << "[" << pointer << "]>";
   }
@@ -24,10 +46,18 @@ void genetic::display::DrawEquation(int pointer, bool nulls, bool index) {
       }
     }
     if (bit < 10 && loadoperator == false) {
-      std::cout << bytes[bit];
+      if (nulls == true) {
+        std::cout << " " << bytes[bit] << " ";
+      } else {
+        std::cout << bytes[bit];
+      }
       loadoperator = true;
     } else if (bit > 9 && bit < 14 && loadoperator == true) {
-      std::cout << bytes[bit];
+      if (nulls == true) {
+        std::cout << " " << bytes[bit] << " ";
+      } else {
+        std::cout << bytes[bit];
+      }
       loadoperator = false;
     } else if (nulls == true) {
       std::cout << "[" << bytes[bit] << "]";
