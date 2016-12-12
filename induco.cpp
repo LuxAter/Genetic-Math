@@ -2,7 +2,14 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
+#include <termios.h>
+#include <unistd.h>
 #include <vector>
+
+namespace induco {
+struct termios t;
+}
 
 int induco::Menu(std::string title, std::vector<std::string> options) {
   bool start = true;
@@ -38,6 +45,13 @@ int induco::Menu(std::string title, std::vector<std::string> options) {
 double induco::GetValue(std::string value) {
   std::cout << "Please Enter Value for \"" + value + "\": ";
   long double input = 0;
+  std::cin >> input;
+  return (input);
+}
+
+std::string induco::SGetValue(std::string value) {
+  std::cout << "Please Enter Value for \"" + value + "\": ";
+  std::string input = "";
   std::cin >> input;
   return (input);
 }
@@ -132,4 +146,16 @@ void induco::Break() {
   Line(50);
   Line(50);
   std::cout << "\n\n\n\n\n";
+}
+
+void induco::Echo(bool setting) {
+  if (setting == true) {
+    tcgetattr(STDIN_FILENO, &t);
+    t.c_lflag = -ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+  } else if (setting == false) {
+    tcgetattr(STDIN_FILENO, &t);
+    t.c_lflag = -ECHOK;
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+  }
 }

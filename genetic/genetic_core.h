@@ -9,10 +9,10 @@ struct Chromosome {
   double value, fitness, cumulativefitness, bottemup;
 };
 extern int populationsize, chromosomelength, genoration;
-extern double goalvalue, crossoverrate, mutationrate;
+extern double goalvalue, mutationrate;
 extern std::vector<Chromosome> population;
-double RunAlgorithm(double gova = 0, int popsize = 100, int chrolength = 15,
-                    double crossrate = 0.7, double mutrate = 0.001);
+double RunAlgorithm(double gova = -1, int popsize = -1, int chrolength = -1,
+                    double mutate = -1);
 double drand();
 void Clean();
 }
